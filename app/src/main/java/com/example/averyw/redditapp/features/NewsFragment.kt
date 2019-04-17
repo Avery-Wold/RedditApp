@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.averyw.redditapp.R
 import com.example.averyw.redditapp.commons.RedditNewsItem
+import com.example.averyw.redditapp.commons.RxBaseFragment
 import com.example.averyw.redditapp.features.adapter.NewsAdapter
 import com.example.averyw.redditapp.commons.extensions.inflate
 import kotlinx.android.synthetic.main.news_fragment.*
@@ -18,7 +19,7 @@ import rx.schedulers.Schedulers
  * Created by averyw on 4/12/2019.
  */
 
-class NewsFragment : Fragment() {
+class NewsFragment : RxBaseFragment() {
     private val newsManager by lazy { NewsManager() }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -49,6 +50,7 @@ class NewsFragment : Fragment() {
                             Snackbar.make(news_list, e.message ?: "", Snackbar.LENGTH_LONG).show()
                         }
                 )
+        subscriptions.add(subscription)
     }
 
     private fun initAdapter() {
