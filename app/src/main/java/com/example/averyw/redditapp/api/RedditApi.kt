@@ -9,7 +9,7 @@ import retrofit2.http.Query
  */
 
 interface  RedditApi {
-    @GET("/search.json?q=anthemthegame")
+    @GET("/search.json?q=anthemthegame&sort=new")
     fun getTop(@Query("after") after: String,
                @Query("limit") limit: String)
             : Call<RedditNewsResponse>

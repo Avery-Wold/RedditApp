@@ -1,6 +1,8 @@
 package com.example.averyw.redditapp.features
 
-import com.example.averyw.redditapp.api.RestAPI
+import com.example.averyw.redditapp.api.NewsAPI
+import com.example.averyw.redditapp.api.NewsRestAPI
+import com.example.averyw.redditapp.commons.RedditNews
 import com.example.averyw.redditapp.commons.RedditNewsItem
 import rx.Observable
 
@@ -8,21 +10,28 @@ import rx.Observable
  * Created by AveryW on 4/16/2019.
  */
 
-class NewsManager(private val api: RestAPI = RestAPI()) {
+class NewsManager(private val api: NewsAPI = NewsRestAPI()) {
 
-    fun getNews(limit: String = "10"): Observable<List<RedditNewsItem>> {
+    fun getNews(after: String, limit: String = "10"): Observable<RedditNews> {
         return Observable.create {
             subscriber ->
-            val callRespose = api.getNews("", limit)
+            val callRespose = api.getNews(after, limit)
             val response = callRespose.execute()
 
             if(response.isSuccessful){
-                val news = response.body().data.children.map {
+                val dataResponse = response.body().data
+                val news = dataResponse.children.map {
                     val item = it.data
                     RedditNewsItem(item.author, item.title, item.num_comments,
                             item.created, item.thumbnail, item.url)
                 }
-                subscriber.onNext(news)
+                println(news)
+                val redditNews = RedditNews(
+                        dataResponse.after ?: "",
+                        dataResponse.before ?: "",
+                        news
+                )
+                subscriber.onNext(redditNews)
                 subscriber.onCompleted()
             } else {
                 subscriber.onError(Throwable(response.message()))
@@ -30,15 +39,3 @@ class NewsManager(private val api: RestAPI = RestAPI()) {
         }
     }
 }
-
-//            val news = mutableListOf<RedditNewsItem>()
-//            for (i in 1..10) {
-//                news.add(RedditNewsItem(
-//                        "author$i",
-//                        "Title $i",
-//                        i, // number of comments
-//                        1457207701L - i * 200, // time
-//                        "http://lorempixel.com/200/200/technics/$i", // image url
-//                        "url"
-//                ))
-//            }
