@@ -15,18 +15,22 @@ import kotlinx.android.synthetic.main.news_item.view.*
  * Created by AveryW on 4/12/2019.
  */
 
-class NewsDelegateAdapter : ViewTypeDelegateAdapter {
+class NewsDelegateAdapter(val viewActions: onViewSelectedListener) : ViewTypeDelegateAdapter {
+
+    interface onViewSelectedListener {
+        fun onItemSelected(url: String?)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup): RecyclerView.ViewHolder {
-        return TurnsViewHolder(parent)
+        return NewsViewHolder(parent)
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, item: ViewType) {
-        holder as TurnsViewHolder
+        holder as NewsViewHolder
         holder.bind(item as RedditNewsItem)
     }
 
-    class TurnsViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
+    inner class NewsViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
             parent.inflate(R.layout.news_item)) {
 
         private val imgThumbnail = itemView.img_thumbnail
@@ -43,7 +47,7 @@ class NewsDelegateAdapter : ViewTypeDelegateAdapter {
             comments.text = "${item.numComments} comments"
             time.text = item.created.getFriendlyTime()
 
-//            super.itemView.setOnClickListener { viewActions.onItemSelected(item.url)}
+            super.itemView.setOnClickListener { viewActions.onItemSelected(item.url)}
         }
     }
 }

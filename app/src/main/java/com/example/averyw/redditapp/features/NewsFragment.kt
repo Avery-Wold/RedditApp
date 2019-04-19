@@ -1,5 +1,7 @@
 package com.example.averyw.redditapp.features
 
+import android.content.Intent
+import android.net.Uri
 import android.support.v4.app.Fragment
 import android.os.Bundle
 import android.support.design.widget.Snackbar
@@ -11,8 +13,10 @@ import com.example.averyw.redditapp.R
 import com.example.averyw.redditapp.commons.InfiniteScrollListener
 import com.example.averyw.redditapp.commons.RedditNews
 import com.example.averyw.redditapp.commons.RxBaseFragment
+import com.example.averyw.redditapp.commons.extensions.androidLazy
 import com.example.averyw.redditapp.features.adapter.NewsAdapter
 import com.example.averyw.redditapp.commons.extensions.inflate
+import com.example.averyw.redditapp.features.adapter.NewsDelegateAdapter
 import kotlinx.android.synthetic.main.news_fragment.*
 import rx.schedulers.Schedulers
 
@@ -20,7 +24,17 @@ import rx.schedulers.Schedulers
  * Created by averyw on 4/12/2019.
  */
 
-class NewsFragment : RxBaseFragment() {
+class NewsFragment : RxBaseFragment(), NewsDelegateAdapter.onViewSelectedListener {
+
+    override fun onItemSelected(url: String?) {
+        if (url.isNullOrEmpty()) {
+            Snackbar.make(news_list, "No URL assigned to this news", Snackbar.LENGTH_LONG).show()
+        } else {
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.data = Uri.parse(url)
+            startActivity(intent)
+        }
+    }
 
     companion object {
         private val KEY_REDDIT_NEWS = "redditNews"
@@ -28,6 +42,7 @@ class NewsFragment : RxBaseFragment() {
 
     private  var redditNews: RedditNews? = null
     private val newsManager by lazy { NewsManager() }
+    private  val newsAdapter by androidLazy { NewsAdapter(this) }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return container?.inflate(R.layout.news_fragment)
@@ -72,7 +87,7 @@ class NewsFragment : RxBaseFragment() {
 
     private fun initAdapter() {
         if (news_list.adapter == null) {
-            news_list.adapter = NewsAdapter()
+            news_list.adapter = newsAdapter
         }
     }
 }
