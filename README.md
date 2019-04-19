@@ -10,6 +10,4 @@ Coroutines (previously with RxJava)
 
 Picasso
 
-Dagger 2
-
 Kotlin Android Extensions
