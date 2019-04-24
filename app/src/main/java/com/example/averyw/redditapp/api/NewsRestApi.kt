@@ -22,6 +22,6 @@ class NewsRestAPI() : NewsAPI {
     }
 
     override fun getNews(after: String, limit: String): Call<RedditNewsResponse> {
-        return redditApi.getTop(after, limit)
+        return redditApi.getAnthem(after, limit)
     }
 }

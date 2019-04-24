@@ -70,7 +70,6 @@ class NewsFragment : RxBaseFragment(), NewsDelegateAdapter.onViewSelectedListene
     }
 
     private fun requestNews() {
-//        val subscription = newsManager.getNews()
         val subscription = newsManager.getNews(redditNews?.after ?: "")
                 .subscribeOn(Schedulers.io())
                 .subscribe(
